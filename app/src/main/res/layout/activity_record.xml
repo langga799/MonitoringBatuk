@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.record.RecordActivity">
+
+<!--    <Button-->
+<!--        android:id="@+id/startRecording"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_alignParentTop="true"-->
+<!--        android:layout_marginStart="40dp"-->
+<!--        android:layout_marginBottom="100dp"-->
+<!--        android:text="@string/start_recording"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toStartOf="@+id/stopRecording"-->
+<!--        app:layout_constraintStart_toStartOf="parent" />-->
+
+<!--    <Button-->
+<!--        android:id="@+id/stopRecording"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_below="@+id/startRecording"-->
+<!--        android:layout_marginStart="8dp"-->
+<!--        android:layout_marginEnd="40dp"-->
+<!--        android:text="@string/stop_recording"-->
+<!--        app:layout_constraintBottom_toBottomOf="@+id/startRecording"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toEndOf="@+id/startRecording" />-->
+
+    <com.visualizer.amplitude.AudioRecordView
+        android:id="@+id/audioRecordView"
+        android:layout_width="0dp"
+        android:layout_height="300dp"
+        app:chunkAlignTo="bottom"
+        app:chunkColor="#2991E6"
+        app:chunkMaxHeight="60dp"
+        app:chunkMinHeight="2dp"
+        app:chunkRoundedCorners="false"
+        app:chunkSoftTransition="false"
+        app:chunkSpace="1dp"
+        app:chunkWidth="4dp"
+        app:direction="leftToRight"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+<!--    <com.anand.brose.graphviewlibrary.GraphView-->
+<!--        android:id="@+id/graphView"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="100dp"-->
+<!--        android:background="@color/white"-->
+<!--        android:backgroundTint="@color/white"-->
+<!--        android:fillViewport="true"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintHorizontal_bias="0.0"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:tint="@color/white" />-->
+
+<!--    <Button-->
+<!--        android:id="@+id/zoomIn"-->
+<!--        android:layout_width="40dp"-->
+<!--        android:layout_height="40dp"-->
+<!--        android:layout_alignParentRight="true"-->
+<!--        android:layout_marginEnd="8dp"-->
+<!--        android:alpha="0.8"-->
+<!--        android:backgroundTint="@android:color/holo_red_dark"-->
+<!--        android:text="+"-->
+<!--        android:textColor="@android:color/background_light"-->
+<!--        app:layout_constraintBottom_toTopOf="@+id/zoomOu"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/audioRecordView"-->
+<!--        app:layout_constraintVertical_bias="0.97" />-->
+
+<!--    <Button-->
+<!--        android:id="@+id/zoomOu"-->
+<!--        android:layout_width="40dp"-->
+<!--        android:layout_height="40dp"-->
+<!--        android:layout_alignParentRight="true"-->
+<!--        android:layout_marginEnd="8dp"-->
+<!--        android:alpha="0.8"-->
+<!--        android:backgroundTint="@android:color/holo_red_dark"-->
+<!--        android:text="-"-->
+<!--        android:textColor="@android:color/background_light"-->
+<!--        app:layout_constraintBottom_toBottomOf="@+id/graphView"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintHorizontal_bias="1.0"-->
+<!--        app:layout_constraintStart_toStartOf="parent" />-->
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/chart"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/audioRecordView"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <!--    <androidx.appcompat.widget.SwitchCompat-->
+<!--        android:id="@+id/switchSoftTransition"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="26dp"-->
+<!--        android:layout_marginEnd="16dp"-->
+<!--        android:switchPadding="10dp"-->
+<!--        android:text="@string/soft_transition"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
+
+<!--    <androidx.appcompat.widget.SwitchCompat-->
+<!--        android:id="@+id/switchRoundedCorners"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="26dp"-->
+<!--        android:switchPadding="10dp"-->
+<!--        android:text="@string/rounded_corners"-->
+<!--        app:layout_constraintEnd_toEndOf="@+id/switchSoftTransition"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/switchSoftTransition" />-->
+
+<!--    <androidx.appcompat.widget.SwitchCompat-->
+<!--        android:id="@+id/switchAlignTo"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="26dp"-->
+<!--        android:switchPadding="10dp"-->
+<!--        android:text="@string/align_to_center"-->
+<!--        app:layout_constraintEnd_toEndOf="@+id/switchRoundedCorners"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/switchRoundedCorners" />-->
+
+<!--    <androidx.appcompat.widget.SwitchCompat-->
+<!--        android:id="@+id/switchDirection"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="26dp"-->
+<!--        android:switchPadding="10dp"-->
+<!--        android:text="@string/draw_right_to_left"-->
+<!--        app:layout_constraintEnd_toEndOf="@+id/switchRoundedCorners"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/switchAlignTo" />-->
+
+</androidx.constraintlayout.widget.ConstraintLayout>
