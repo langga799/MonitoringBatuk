@@ -2,8 +2,11 @@ package com.example.monitoringbatuk.ui.dashboard
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
@@ -25,6 +28,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 
@@ -36,12 +40,17 @@ class DashboardActivity : AppCompatActivity() {
     private lateinit var preferenceViewModel: PreferenceViewModel
     private val Context.dataStorePref by preferencesDataStore(name = "settings")
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDashboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
+        val db = Firebase.firestore
+        db.collection("history").document("history")
+            .delete()
+            .addOnSuccessListener { Log.d("DashbOard", "DocumentSnapshot successfully deleted!") }
+            .addOnFailureListener { e -> Log.w("DashbOard", "Error deleting document", e) }
 
 
         val pref = PreferenceDataStore.getInstance(this.dataStorePref)
@@ -112,6 +121,7 @@ class DashboardActivity : AppCompatActivity() {
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun navigationController() {
         binding.apply {
             btnDataRecord.setOnClickListener {

@@ -4,14 +4,13 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.media.MediaRecorder
+import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.anand.brose.graphviewlibrary.WaveSample
-import com.example.monitoringbatuk.MainActivity
 import com.example.monitoringbatuk.R
 import com.example.monitoringbatuk.databinding.ActivityRecordBinding
 import com.github.mikephil.charting.data.Entry
@@ -23,20 +22,31 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
+import com.google.firebase.firestore.SetOptions
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.visualizer.amplitude.dp
 import java.io.File
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 
 @Suppress("DEPRECATION")
+@RequiresApi(Build.VERSION_CODES.O)
 class RecordActivity : AppCompatActivity() {
 
     companion object {
         const val REQUEST_CODE = 200
+        const val OUTPUT_DIRECTORY = "VoiceRecorder"
+        const val OUTPUT_FILENAME = "recorder.mp3"
     }
 
     private lateinit var binding: ActivityRecordBinding
+    private var nameUser = ""
+    private var count = 0
+
+    private val db = Firebase.firestore
 
     private val requiredPermissions = arrayOf(
         Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -47,18 +57,13 @@ class RecordActivity : AppCompatActivity() {
     private var timer: Timer? = null
     private var recorder: MediaRecorder? = null
     private var audioFile: File? = null
-    var handler = Handler()
-
-
-    val pointList: MutableList<WaveSample> = ArrayList()
-    private var scale = 8
-
 
     val listPoint = arrayListOf<Float>()
 
-
     private lateinit var databaseReference: DatabaseReference
     private lateinit var firebaseAuth: FirebaseAuth
+
+    // private val chartRoomDatabase by lazy { ChartRoomDatabase.getDatabase(this).chartDao() }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,22 +72,31 @@ class RecordActivity : AppCompatActivity() {
         setContentView(binding.root)
 
 
-        databaseReference = Firebase.database.reference
-        firebaseAuth = FirebaseAuth.getInstance()
-
-//        binding.apply {
-//            startRecording.setOnClickListener {
-//                startRecording()
+//            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+//                if (result.resultCode == Activity.RESULT_OK) {
+//                    // Get the new note from the AddNoteActivity
+//                    val dataAdded = 100
+//                    val noteText = result.data?.getStringExtra("note_text")
+//                    // Add the new note at the top of the list
+//                    val newNote = Chart(dataAdded)
+//
+//                    lifecycleScope.launch {
+//                        chartRoomDatabase.insert(newNote)
+//                    }
+//                }
+//
 //            }
-//            stopRecording.setOnClickListener {
-//                stopRecording()
+//
+//
+//        binding.textView14.setOnClickListener {
+//            lifecycleScope.launch {
+//                Log.d("===============", chartRoomDatabase.getAllChart().data.toString())
 //            }
 //        }
 
 
-        handler.postDelayed({
-            //    startRecording()
-        }, 100L)
+        databaseReference = Firebase.database.reference
+        firebaseAuth = FirebaseAuth.getInstance()
 
 
         binding.audioRecordView.apply {
@@ -94,37 +108,12 @@ class RecordActivity : AppCompatActivity() {
             chunkSpace = 1.dp()
         }
 
-
-        // ============================= Behavior ================================
-//        val graphView = findViewById<GraphView>(R.id.graphView)
-//        val zoomIn = findViewById<Button>(R.id.zoomIn)
-//        zoomIn.setOnClickListener {
-//            scale += 1
-//            if (scale > 15) {
-//                scale = 15
-//            }
-//            graphView?.setWaveLengthPX(scale)
-//            if (!recorder?.isRecording!!) {
-//                graphView?.showFullGraph(samples)
-//            }
-//        }
-
-//        val zoomOut = findViewById<Button>(R.id.zoomOu)
-//        zoomOut.setOnClickListener {
-//            scale -= 1
-//            if (scale < 2) {
-//                scale = 2
-//            }
-
-//            graphView?.setWaveLengthPX(scale)
-//            if (!recorder?.isRecording!!) {
-//                graphView?.showFullGraph(samples)
-//            }
-//        }
-
+        binding.clearChart.setOnClickListener {
+            binding.chart.clear()
+        }
 
         getStateFromFirebase()
-
+        getNameUser()
     }
 
 
@@ -134,26 +123,24 @@ class RecordActivity : AppCompatActivity() {
             return
         }
 
-//        binding.startRecording.isEnabled = false
-//        binding.stopRecording.isEnabled = true
-
-        //Creating file
         try {
-            audioFile = File.createTempFile("audio", "tmp", cacheDir)
+            audioFile = File.createTempFile("audio", "tmp.mp3", cacheDir)
         } catch (e: java.io.IOException) {
-            Log.e(MainActivity::class.simpleName, e.message ?: e.toString())
+            Log.e(RecordActivity::class.simpleName, e.message ?: e.toString())
             return
         }
 
-        //Creating MediaRecorder and specifying audio source, output format, encoder & output format
+
+        //Creating MediaRecorder
         recorder = MediaRecorder()
         recorder?.apply {
             setAudioSource(MediaRecorder.AudioSource.MIC)
             setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
             setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-            setOutputFile(audioFile?.absolutePath)
             setAudioSamplingRate(48000)
             setAudioEncodingBitRate(48000)
+            setOutputFile(audioFile?.absolutePath)
+
 
             try {
                 prepare()
@@ -163,32 +150,22 @@ class RecordActivity : AppCompatActivity() {
                 e.printStackTrace()
             }
 
-
-            //setOutputFile("/dev/null")
-
         }
-
-
 
         startDrawing()
 
+        Log.d("suara", audioFile.toString())
+        //  Log.d("suara", recorder?.setOutputFile( file.absoluteFile.toString() + "/" + OUTPUT_FILENAME).toString())
     }
 
 
     private fun stopRecording() {
-//        binding.startRecording.isEnabled = true
-//        binding.stopRecording.isEnabled = false
         //stopping recorder
         recorder?.apply {
-            try {
-
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
             stop()
             release()
         }
-
+        Log.d("suara", audioFile.toString())
         stopDrawing()
     }
 
@@ -199,39 +176,9 @@ class RecordActivity : AppCompatActivity() {
             override fun run() {
                 try {
                     val currentMaxAmplitude = recorder?.maxAmplitude
-                    binding.audioRecordView.update(currentMaxAmplitude ?: 0) //redraw view
-
-//
-//                    val startTime = System.currentTimeMillis()
-//                    val date = Date(startTime)
-//                    val format = SimpleDateFormat("HH:mm")
-//                    val time = format.format(date)
-
-//                    val graphView = findViewById<GraphView>(R.id.graphView)
-//                    graphView.maxAmplitude = 48000
-//                    graphView.setMasterList(pointList)
-//                    graphView.startPlotting()
-                    //pointList.add(WaveSample(1000L, currentMaxAmplitude ?: 0))
-
-
-//                    runOnUiThread {
-//                        listPoint.add(recorder?.maxAmplitude ?: 0)
-//                        val record = ArrayList<Entry>()
-//                        val mutableData = mutableListOf<Int>()
-//
-//
-//                        for (j in listPoint.indices) {
-//                            mutableData.add(listPoint[j])
-//
-//                        }
-//
-//                        for ((x, y) in mutableData.indices.withIndex()) {
-//                            record.add(Entry(x.toFloat(), mutableData[y].toFloat()))
-//                        }
-//
-//                        recordMonitoring(record)
-//
-//                    }
+                    if (currentMaxAmplitude ?: 0 > 1000) {
+                        binding.audioRecordView.update(currentMaxAmplitude ?: 0) //redraw view
+                    }
 
 
                     Log.d("audio", currentMaxAmplitude.toString())
@@ -241,16 +188,13 @@ class RecordActivity : AppCompatActivity() {
 
 
             }
-        }, 0, 1)
-
-
+        }, 1000, 1)
     }
 
 
     private fun stopDrawing() {
         timer?.cancel()
         binding.audioRecordView.recreate()
-
     }
 
 
@@ -282,25 +226,26 @@ class RecordActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         timer?.cancel()
+        stopRecordState()
         super.onBackPressed()
-//        val graphView = findViewById<GraphView>(R.id.graphView)
-//        graphView?.stopPlotting()
-
     }
 
     override fun onDestroy() {
         timer?.cancel()
-        stopRecording()
         super.onDestroy()
-
     }
 
-    // ==============================================
+
+    // ====================================================================================
 
     private fun getStateFromFirebase() {
         val uid = firebaseAuth.uid
         val reference =
-            databaseReference.child("UserData").child("$uid").child("batuk").child("status")
+            databaseReference
+                .child("UserData")
+                .child("$uid")
+                .child("nilaibatuk")
+                .child("status")
 
         Log.d("uid", uid.toString())
         reference.addValueEventListener(object : ValueEventListener {
@@ -325,13 +270,32 @@ class RecordActivity : AppCompatActivity() {
     private fun getPersentaseBatuk() {
         val uid = firebaseAuth.uid
         val reference =
-            databaseReference.child("UserData").child("$uid").child("batuk").child("persentase")
+            databaseReference
+                .child("UserData")
+                .child("$uid")
+                .child("nilaibatuk")
+                .child("databatuk")
 
         reference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
 
                 Log.d("snap", snapshot.value.toString())
-                listPoint.add(snapshot.value.toString().toFloat())
+                val map = snapshot.value as Map<*, *>?
+                for (data in map?.values!!) {
+                    if (data.toString().toFloat() > 50.0) {
+                        listPoint.add(data.toString().toFloat())
+                        count++
+                        binding.tvPersentase.text = data.toString()
+
+                    }
+                }
+
+                Log.d("uuuuuuuuuuu", map.values.toString())
+
+//                for (data in map.values){
+//                    val point = data.toString().toFloat()
+//                                        sendToFirebaseChart(point)
+//                }
 
                 val record = ArrayList<Entry>()
                 val mutableData = mutableListOf<Float>()
@@ -341,7 +305,7 @@ class RecordActivity : AppCompatActivity() {
                 }
 
                 for ((x, y) in mutableData.indices.withIndex()) {
-                    record.add(Entry(x.toFloat(), mutableData[y].toFloat()))
+                    record.add(Entry(x.toFloat(), mutableData[y]))
                 }
 
                 recordMonitoring(record)
@@ -384,6 +348,113 @@ class RecordActivity : AppCompatActivity() {
         lineChart.axisRight.isEnabled = false
 
 
+    }
+
+
+//    private fun sendToFirebaseChart(data:Float){
+//        databaseReference.child("UserData")
+//            .child(firebaseAuth.uid.toString())
+//            .child("chart")
+//            .child("point")
+//            .setValue(data)
+//
+//
+//    }
+
+
+    private fun stopRecordState() {
+        val uid = firebaseAuth.uid
+        val reference =
+            databaseReference
+                .child("UserData")
+                .child("$uid")
+                .child("nilaibatuk")
+                .child("status")
+
+        reference.setValue("0")
+
+        sendToFirestore()
+    }
+
+
+    private fun sendToFirestore() {
+        val current = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val date = current.format(formatter)
+
+        val formatTime = DateTimeFormatter.ofPattern("HH:mm:ss")
+        val time = current.format(formatTime)
+
+        Log.d("countt", count.toString())
+
+//        val history = hashMapOf(
+//            "batuk" to count.toString(),
+//            "nama" to nameUser,
+//            "tanggal" to date,
+//            "waktu" to time,
+//            "removeId" to listOf("")
+//        )
+
+//        val history = hashMapOf(
+//            "data" to mutableListOf(
+//                mapOf(
+//                "batuk" to count.toString(),
+//                "nama" to nameUser,
+//                "tanggal" to date,
+//                "waktu" to time,
+//                "removeId" to ""
+//                )
+//            )
+//        )
+
+        val history =
+
+                "data" to mapOf(
+                    "batuk" to count.toString(),
+                    "nama" to nameUser,
+                    "tanggal" to date,
+                    "waktu" to time,
+                    "removeId" to ""
+                )
+
+
+
+        val docData: MutableMap<String, Any> = HashMap()
+
+        docData["listExample"] = arrayOf(mapOf(
+            "batuk" to count.toString(),
+            "nama" to nameUser,
+            "tanggal" to date,
+            "waktu" to time,
+            "removeId" to ""
+        ))
+
+
+        db.collection("history").document("list_history")
+            .set(history, SetOptions.merge())
+            .addOnCompleteListener { result ->
+                Log.d("dataCollection", result.toString())
+                Log.d("documentId", result.toString())
+
+            }
+
+
+    }
+
+
+    private fun getNameUser() {
+        val uid = firebaseAuth.uid
+        val reference = databaseReference.child("UserData").child(uid.toString()).child("fullName")
+
+        reference.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    nameUser = snapshot.value.toString()
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
     }
 
 

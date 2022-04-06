@@ -1,8 +1,6 @@
 package com.example.monitoringbatuk.ui.history
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -12,12 +10,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.monitoringbatuk.R
 import com.example.monitoringbatuk.databinding.ItemViewHistoryBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.ktx.database
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 class HistorySearchAdapter(private val listData: ArrayList<History>) :
     RecyclerView.Adapter<HistorySearchAdapter.HistoryViewHolder>() {
+
+    var id = ""
+    private val db = Firebase.firestore
 
     inner class HistoryViewHolder(private val binding: ItemViewHistoryBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -47,29 +47,49 @@ class HistorySearchAdapter(private val listData: ArrayList<History>) :
         holder.bind(listData[position])
         val btnDelete = holder.itemView.findViewById<ImageView>(R.id.btn_delete)
         btnDelete.setOnClickListener {
+
+            Log.d("position adapter", position.toString())
+            val ref = db.collection("history").document().id
+
+            db.collection("history").get()
+                .addOnSuccessListener {
+                    for (doc in it) {
+                        Log.d("aaaaaaaaa", doc.id.take(0)  . toString ())
+                    }
+                }
+
+            db.collection("history").document("qOog34Iwmf8HIHL1IMED").collection("baru")
+                .get()
+                .addOnSuccessListener {
+                    for (data in it.documents){
+                        Log.d("aaaaabbbbbaaaa", data.toString ())
+                    }
+                }
+
             MaterialAlertDialogBuilder(holder.itemView.context)
                 .setTitle("Hapus riwayat")
                 .setMessage("Apakah anda ingin menghapus item riwayat ini?")
                 .setNegativeButton("No") { dialog, _ ->
                     dialog.dismiss()
-                    Toast.makeText(holder.itemView.context, "Action was canceled", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(holder.itemView.context,
+                        "Action was canceled",
+                        Toast.LENGTH_SHORT).show()
                 }
+
                 .setPositiveButton("Yes") { _, _ ->
-                   Firebase.database.reference.child("UserData").child(FirebaseAuth.getInstance().currentUser?.uid.toString())
-                       .child("history")
-                       .child("id")
-                       .setValue(null)
-                    notifyDataSetChanged()
+                    val db = Firebase.firestore
+                    val query = db.collection("history")
+                        .whereEqualTo("waktu", "14:18:16")
+                        .get()
+                    query.addOnSuccessListener {
+                        for (document in it) {
+                            db.collection("history").document(document.id).delete()
+                                .addOnSuccessListener {
+                                    print("Succcesss===========================================")
+                                }
+                        }
+                    }
 
-                    it.context.startActivity(Intent(it.context, SearchHistoryActivity::class.java)
-                        .addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION))
-
-//                    val intent = (context as Activity).intent
-//                    intent.putExtra("SELECTED_PAYMENT", mCurrentlyCheckedRB
-//                        .getText().toString())
-//                    (context as Activity).setResult((context as Activity).RESULT_OK,
-//                        intent)
-//                    (context as Activity).finish()
 
                 }
                 .show()
@@ -78,6 +98,20 @@ class HistorySearchAdapter(private val listData: ArrayList<History>) :
 
     override fun getItemCount(): Int {
         return listData.size
+    }
+
+    fun deleteItem(documentId: String) {
+        val db = Firebase.firestore
+        val docRef = db.collection("history").document(documentId).delete()
+        docRef.addOnSuccessListener {
+            Log.d("=================", "Success")
+        }
+
+    }
+
+    init {
+        id = Firebase.firestore.collection("history").document().id
+        Log.d("doccccccccccc", Firebase.firestore.collection("history").document().id)
     }
 
 }

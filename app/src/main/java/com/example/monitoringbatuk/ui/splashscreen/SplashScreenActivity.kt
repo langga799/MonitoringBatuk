@@ -51,9 +51,6 @@ class SplashScreenActivity : AppCompatActivity() {
         }
 
 
-
-
-
     }
 
     companion object {
