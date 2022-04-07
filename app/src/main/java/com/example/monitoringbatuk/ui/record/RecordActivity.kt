@@ -1,6 +1,7 @@
 package com.example.monitoringbatuk.ui.record
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.media.MediaRecorder
@@ -13,6 +14,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.monitoringbatuk.R
 import com.example.monitoringbatuk.databinding.ActivityRecordBinding
+import com.example.monitoringbatuk.ui.history.History
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
@@ -22,6 +24,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -173,11 +176,18 @@ class RecordActivity : AppCompatActivity() {
     private fun startDrawing() {
         timer = Timer()
         timer?.schedule(object : TimerTask() {
+            @SuppressLint("SetTextI18n")
             override fun run() {
                 try {
                     val currentMaxAmplitude = recorder?.maxAmplitude
                     if (currentMaxAmplitude ?: 0 > 1000) {
                         binding.audioRecordView.update(currentMaxAmplitude ?: 0) //redraw view
+
+                        binding.tvFrequency.text = currentMaxAmplitude.toString() + " Hz"
+
+                        val db = 20 * kotlin.math.log10(currentMaxAmplitude?.toDouble()!! / 32767.0)
+
+                        binding.tvDecibel.text = db.toString()
                     }
 
 
@@ -279,18 +289,26 @@ class RecordActivity : AppCompatActivity() {
         reference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
 
-                Log.d("snap", snapshot.value.toString())
-                val map = snapshot.value as Map<*, *>?
-                for (data in map?.values!!) {
-                    if (data.toString().toFloat() > 50.0) {
-                        listPoint.add(data.toString().toFloat())
-                        count++
-                        binding.tvPersentase.text = data.toString()
+                listPoint.add(snapshot.value.toString().toFloat())
+                binding.tvPersentase.text = snapshot.value.toString()
 
-                    }
+                if (snapshot.value.toString().toFloat() > 50.0) {
+                    count++
                 }
 
-                Log.d("uuuuuuuuuuu", map.values.toString())
+                //             Log.d("+++++++++", snapshot.value.toString())
+//                Log.d("snap", snapshot.value.toString())
+//                val map = snapshot.value as Map<*, *>?
+//                for (data in map?.values!!) {
+//                    if (data.toString().toFloat() > 50.0) {
+//                        listPoint.add(data.toString().toFloat())
+//                        count++
+//                        binding.tvPersentase.text = data.toString()
+//
+//                    }
+//                }
+//
+//                Log.d("uuuuuuuuuuu", map.values.toString())
 
 //                for (data in map.values){
 //                    val point = data.toString().toFloat()
@@ -387,13 +405,23 @@ class RecordActivity : AppCompatActivity() {
 
         Log.d("countt", count.toString())
 
-//        val history = hashMapOf(
-//            "batuk" to count.toString(),
-//            "nama" to nameUser,
-//            "tanggal" to date,
-//            "waktu" to time,
-//            "removeId" to listOf("")
-//        )
+        val history = hashMapOf(
+            "batuk" to count.toString(),
+            "nama" to nameUser,
+            "tanggal" to date,
+            "waktu" to time,
+            "removeId" to ""
+        )
+
+        db.collection("history")
+            .add(history)
+            .addOnCompleteListener { result ->
+                Log.d("dataCollection", result.toString())
+                Log.d("documentId", result.toString())
+
+            }
+
+
 
 //        val history = hashMapOf(
 //            "data" to mutableListOf(
@@ -407,36 +435,61 @@ class RecordActivity : AppCompatActivity() {
 //            )
 //        )
 
-        val history =
-
-                "data" to mapOf(
-                    "batuk" to count.toString(),
-                    "nama" to nameUser,
-                    "tanggal" to date,
-                    "waktu" to time,
-                    "removeId" to ""
-                )
-
-
-
-        val docData: MutableMap<String, Any> = HashMap()
-
-        docData["listExample"] = arrayOf(mapOf(
-            "batuk" to count.toString(),
-            "nama" to nameUser,
-            "tanggal" to date,
-            "waktu" to time,
-            "removeId" to ""
-        ))
-
-
-        db.collection("history").document("list_history")
-            .set(history, SetOptions.merge())
-            .addOnCompleteListener { result ->
-                Log.d("dataCollection", result.toString())
-                Log.d("documentId", result.toString())
-
-            }
+//        val history = mapOf(
+//            "data" to listOf(
+//                History(
+//                    count.toString(),
+//                    nameUser,
+//                    date,
+//                    time,
+//                    "tes"
+//                )
+//            )
+//        )
+//
+//
+//        val docData: MutableMap<String, Any> = HashMap()
+//
+//        docData["listExample"] = arrayOf(mapOf(
+//            "batuk" to count.toString(),
+//            "nama" to nameUser,
+//            "tanggal" to date,
+//            "waktu" to time,
+//            "removeId" to "tes"
+//        ))
+//
+//
+//        db.collection("history").document().collection("list")
+//            .add(history)
+//            .addOnCompleteListener { result ->
+//                Log.d("dataCollection", result.toString())
+//                Log.d("documentId", result.toString())
+//
+//            }
+//
+//        class Product(
+//            val satu: String,
+//            val dua: String,
+//            val tiga: Int,
+//        )
+//
+//        class Obj(
+//            val satu: String,
+//            val dua: String,
+//            val data: List<Product>,
+//        )
+//
+//        val list = ArrayList<Product>()
+//        list.add(Product("u1", "1", 1))
+//        list.add(Product("u2", "2", 1))
+//        list.add(Product("u3", "3", 1))
+//
+//        val testObject = Obj("Talha", "Kosen", list)
+//        FirebaseFirestore.getInstance().collection("Test").document("a")
+//            .set(testObject, SetOptions.merge())
+//            .addOnCompleteListener {
+//
+//            }
 
 
     }

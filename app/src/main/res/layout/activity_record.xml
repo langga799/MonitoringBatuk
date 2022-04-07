@@ -14,8 +14,8 @@
             android:id="@+id/textView15"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
             android:text="Amplitude Batuk"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -27,10 +27,10 @@
         <com.visualizer.amplitude.AudioRecordView
             android:id="@+id/audioRecordView"
             android:layout_width="0dp"
-            android:layout_height="300dp"
+            android:layout_height="280dp"
             android:layout_marginTop="16dp"
             app:chunkAlignTo="bottom"
-            app:chunkColor="#2991E6"
+            app:chunkColor="@color/teal_200"
             app:chunkMaxHeight="60dp"
             app:chunkMinHeight="2dp"
             app:chunkRoundedCorners="false"
@@ -38,29 +38,87 @@
             app:chunkSpace="1dp"
             app:chunkWidth="4dp"
             app:direction="leftToRight"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView15"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toBottomOf="@+id/textView15" />
 
+
+        <TextView
+            android:id="@+id/textView16"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:text="Frekuensi :"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/audioRecordView" />
+
+        <TextView
+            android:id="@+id/tvFrequency"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="0"
+            android:textColor="@color/purple_400"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/textView16"
+            app:layout_constraintEnd_toStartOf="@+id/textView17"
+            app:layout_constraintStart_toEndOf="@+id/textView16"
+            app:layout_constraintTop_toTopOf="@+id/textView16" />
+
+        <TextView
+            android:id="@+id/textView17"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="Decibel :"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@+id/tvDecibel"
+            app:layout_constraintEnd_toStartOf="@+id/tvDecibel"
+            app:layout_constraintTop_toTopOf="@+id/tvDecibel" />
+
+        <TextView
+            android:id="@+id/tvDecibel"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textColor="@color/purple_400"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/textView18"
+            app:layout_constraintEnd_toStartOf="@+id/textView18"
+            app:layout_constraintTop_toTopOf="@+id/textView18" />
+
+        <TextView
+            android:id="@+id/textView18"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:text="dB"
+            android:textColor="@color/purple_400"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/audioRecordView" />
 
         <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/chart"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="280dp"
             android:layout_marginStart="8dp"
-            android:layout_marginBottom="16dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/audioRecordView"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toBottomOf="@+id/textView16" />
 
         <com.google.android.material.button.MaterialButton
-            style="@style/Widget.AppCompat.Button.Small"
             android:id="@+id/clearChart"
+            style="@style/Widget.AppCompat.Button.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
@@ -90,6 +148,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginBottom="50dp"
             android:text="0.0"
+            android:textColor="@color/purple_400"
             android:textSize="28sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"

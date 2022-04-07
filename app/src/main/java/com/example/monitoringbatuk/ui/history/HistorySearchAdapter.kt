@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.monitoringbatuk.R
 import com.example.monitoringbatuk.databinding.ItemViewHistoryBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
@@ -28,8 +29,6 @@ class HistorySearchAdapter(private val listData: ArrayList<History>) :
             binding.tvTime.text = history.waktu
             binding.tvCount.text = history.batuk
 
-
-            Log.d("dataku", history.toString())
         }
     }
 
@@ -48,23 +47,23 @@ class HistorySearchAdapter(private val listData: ArrayList<History>) :
         val btnDelete = holder.itemView.findViewById<ImageView>(R.id.btn_delete)
         btnDelete.setOnClickListener {
 
-            Log.d("position adapter", position.toString())
-            val ref = db.collection("history").document().id
-
-            db.collection("history").get()
-                .addOnSuccessListener {
-                    for (doc in it) {
-                        Log.d("aaaaaaaaa", doc.id.take(0)  . toString ())
-                    }
-                }
-
-            db.collection("history").document("qOog34Iwmf8HIHL1IMED").collection("baru")
+            db.collection("history")
+                .orderBy("tanggal", Query.Direction.ASCENDING)
                 .get()
                 .addOnSuccessListener {
-                    for (data in it.documents){
-                        Log.d("aaaaabbbbbaaaa", data.toString ())
+                    for (doc in it) {
+                        Log.d("index", doc.toString())
+                        Log.d("index-adapter", doc.id.toString())
+                        Log.d("index-value", doc.data.keys.toString())
+
+
                     }
                 }
+
+
+            id = listId[position]
+           // Log.d("index-new", data)
+
 
             MaterialAlertDialogBuilder(holder.itemView.context)
                 .setTitle("Hapus riwayat")
@@ -78,17 +77,10 @@ class HistorySearchAdapter(private val listData: ArrayList<History>) :
 
                 .setPositiveButton("Yes") { _, _ ->
                     val db = Firebase.firestore
-                    val query = db.collection("history")
-                        .whereEqualTo("waktu", "14:18:16")
-                        .get()
-                    query.addOnSuccessListener {
-                        for (document in it) {
-                            db.collection("history").document(document.id).delete()
-                                .addOnSuccessListener {
-                                    print("Succcesss===========================================")
-                                }
-                        }
-                    }
+
+
+                    db.collection("history").document(id)
+                        .delete()
 
 
                 }

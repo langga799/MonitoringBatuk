@@ -16,6 +16,9 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
+
+var listId = mutableListOf<String>()
+
 class SearchHistoryActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySearchHistoryBinding
@@ -35,16 +38,34 @@ class SearchHistoryActivity : AppCompatActivity() {
         listData = arrayListOf()
 
 
+
+// coba===============================================
+
+        db.collection("Test").document("a")
+            .get()
+            .addOnSuccessListener {
+                Log.d("newwwwwwwwwwww", it.toString())
+            }
+
+
+// ===============================================
+
         db.collection("history")
+            .orderBy("tanggal", Query.Direction.ASCENDING)
             .get()
             .addOnSuccessListener { result ->
                 for (document in result) {
+                    val data = listId.add(document.id)
+                    Log.d("index-data", data.toString())
                     listData.add(document.toObject(History::class.java))
 
-                    document.id
                 }
+                Log.d("index-ku", listId.toString())
                 setupRecycler(listData)
             }
+
+
+
 
 
         val rootRef: FirebaseFirestore = FirebaseFirestore.getInstance()

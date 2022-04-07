@@ -125,24 +125,24 @@ class DashboardActivity : AppCompatActivity() {
     private fun navigationController() {
         binding.apply {
             btnDataRecord.setOnClickListener {
-                startActivity(Intent(this@DashboardActivity, RecordDataActivity::class.java))
+                startActivity(Intent(this@DashboardActivity, RecordActivity::class.java))
             }
 
             btnToHistory.setOnClickListener {
                 startActivity(Intent(this@DashboardActivity, SearchHistoryActivity::class.java))
             }
 
-            imageView2.setOnClickListener {
-                startActivity(Intent(this@DashboardActivity, RecordActivity::class.java))
-            }
+//            imageView2.setOnClickListener {
+//                startActivity(Intent(this@DashboardActivity, RecordActivity::class.java))
+//            }
 
-            textView4.setOnClickListener{
-                startActivity(Intent(this@DashboardActivity, MainActivity::class.java))
-            }
-
-            textView3.setOnClickListener {
-                startActivity(Intent(this@DashboardActivity, SampleActivity::class.java))
-            }
+//            textView4.setOnClickListener{
+//                startActivity(Intent(this@DashboardActivity, MainActivity::class.java))
+//            }
+//
+//            textView3.setOnClickListener {
+//                startActivity(Intent(this@DashboardActivity, SampleActivity::class.java))
+//            }
         }
 
     }
