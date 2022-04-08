@@ -1,7 +1,8 @@
 package com.example.monitoringbatuk.ui.history
 
 import android.annotation.SuppressLint
-import android.util.Log
+import android.app.Activity
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -10,10 +11,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.monitoringbatuk.R
 import com.example.monitoringbatuk.databinding.ItemViewHistoryBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
+var adapterPosition:Int? = null
 class HistorySearchAdapter(private val listData: ArrayList<History>) :
     RecyclerView.Adapter<HistorySearchAdapter.HistoryViewHolder>() {
 
@@ -44,25 +45,13 @@ class HistorySearchAdapter(private val listData: ArrayList<History>) :
     @SuppressLint("NotifyDataSetChanged")
     override fun onBindViewHolder(holder: HistorySearchAdapter.HistoryViewHolder, position: Int) {
         holder.bind(listData[position])
+        adapterPosition = position
+
         val btnDelete = holder.itemView.findViewById<ImageView>(R.id.btn_delete)
         btnDelete.setOnClickListener {
 
-            db.collection("history")
-                .orderBy("tanggal", Query.Direction.ASCENDING)
-                .get()
-                .addOnSuccessListener {
-                    for (doc in it) {
-                        Log.d("index", doc.toString())
-                        Log.d("index-adapter", doc.id.toString())
-                        Log.d("index-value", doc.data.keys.toString())
-
-
-                    }
-                }
-
-
+            // add string id to global variable
             id = listId[position]
-           // Log.d("index-new", data)
 
 
             MaterialAlertDialogBuilder(holder.itemView.context)
@@ -76,34 +65,29 @@ class HistorySearchAdapter(private val listData: ArrayList<History>) :
                 }
 
                 .setPositiveButton("Yes") { _, _ ->
-                    val db = Firebase.firestore
-
 
                     db.collection("history").document(id)
                         .delete()
 
+                    Toast.makeText(holder.itemView.context,
+                        "Success delete item",
+                        Toast.LENGTH_SHORT).show()
 
+
+                    holder.itemView.context.startActivity(Intent(holder.itemView.context,
+                        SearchHistoryActivity::class.java)
+                        .addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    )
                 }
                 .show()
+
+
         }
     }
 
     override fun getItemCount(): Int {
         return listData.size
-    }
-
-    fun deleteItem(documentId: String) {
-        val db = Firebase.firestore
-        val docRef = db.collection("history").document(documentId).delete()
-        docRef.addOnSuccessListener {
-            Log.d("=================", "Success")
-        }
-
-    }
-
-    init {
-        id = Firebase.firestore.collection("history").document().id
-        Log.d("doccccccccccc", Firebase.firestore.collection("history").document().id)
     }
 
 }

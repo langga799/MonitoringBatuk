@@ -10,11 +10,10 @@ import com.example.monitoringbatuk.databinding.ActivitySearchHistoryBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
-import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.util.*
 
 
 var listId = mutableListOf<String>()
@@ -38,18 +37,7 @@ class SearchHistoryActivity : AppCompatActivity() {
         listData = arrayListOf()
 
 
-
-// coba===============================================
-
-        db.collection("Test").document("a")
-            .get()
-            .addOnSuccessListener {
-                Log.d("newwwwwwwwwwww", it.toString())
-            }
-
-
-// ===============================================
-
+        // get history data
         db.collection("history")
             .orderBy("tanggal", Query.Direction.ASCENDING)
             .get()
@@ -58,81 +46,13 @@ class SearchHistoryActivity : AppCompatActivity() {
                     val data = listId.add(document.id)
                     Log.d("index-data", data.toString())
                     listData.add(document.toObject(History::class.java))
-
                 }
-                Log.d("index-ku", listId.toString())
+
+                Log.d("index-list", listId.toString())
                 setupRecycler(listData)
             }
 
 
-
-
-
-        val rootRef: FirebaseFirestore = FirebaseFirestore.getInstance()
-        val historyRef: CollectionReference = rootRef.collection("history")
-        val docIdQuery: Query = historyRef.whereEqualTo("docId", "4vom6RfWU9depGXR0Zw0")
-        docIdQuery.get().addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                for (document in task.result!!) {
-                    document.reference.delete()
-                        .addOnSuccessListener {
-                            Log.d("TAG", "Document successfully deleted!")
-
-                        }.addOnFailureListener { e ->
-
-                            Log.w("TAG", "Error deleting document", e)
-                        }
-                }
-
-            } else {
-                Log.d("TAG",
-                    "Error getting documents: ",
-                    task.exception) //Don't ignore potential errors!
-            }
-        }
-
-//            .addSnapshotListener { value, error ->
-//                for (document in value?.documentChanges!!) {
-//                    if (document.type == DocumentChange.Type.ADDED) {
-//                        listData.add(document.document.toObject(History::class.java))
-//                    }
-//                }
-//                setupRecycler(listData)
-//
-//                error?.message?.let { Log.e("History :", it) }
-//            }
-
-
-//        if (listData.isEmpty()){
-//            Toast.makeText(this@SearchHistoryActivity, "History is Empty", Toast.LENGTH_SHORT).show()
-//        }
-
-
-//        val reference =
-//            databaseReference.child("UserData").child(firebaseAuth.currentUser?.uid.toString())
-//                .child("history")
-//
-//        Log.d("data-uid", firebaseAuth.currentUser?.uid.toString())
-//
-//        reference.addValueEventListener(object : ValueEventListener {
-//            override fun onDataChange(snapshot: DataSnapshot) {
-//                if (snapshot.exists()) {
-//                    for (data in snapshot.children) {
-//                        Log.d("snapshot", "$data")
-//                        val addToList = data.getValue(History::class.java)
-//                        listData.add(addToList!!)
-//
-//
-//                    }
-//                  //  setupRecycler(listData)
-//                }
-//            }
-//
-//            override fun onCancelled(error: DatabaseError) {
-//
-//            }
-//
-//        })
 
 
         binding.searchHistory.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -143,8 +63,7 @@ class SearchHistoryActivity : AppCompatActivity() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                searchHistory(newText.orEmpty())
-                return true
+                return false
             }
 
         })
@@ -153,22 +72,30 @@ class SearchHistoryActivity : AppCompatActivity() {
 
 
     private fun searchHistory(query: String) {
-        db.collection("history")
-            .whereEqualTo("waktu", query)
-            .get()
-            .addOnCompleteListener { data ->
-                for (doc in data.result) {
-                    listData.add(doc.toObject(History::class.java))
-                    Log.d("ggggg", doc.toObject(History::class.java).toString())
+
+        if (query.isNotEmpty()) {
+
+            db.collection("history").whereEqualTo("tanggal", query.lowercase(Locale.ROOT))
+                .get()
+                .addOnCompleteListener { task ->
+
+                    for (doc in task.result) {
+                        Log.d("search-hasil", doc.toString())
+                        val model = History(
+                            doc.getString("batuk"),
+                            doc.getString("nama"),
+                            doc.getString("tanggal"),
+                            doc.getString("waktu")
+                        )
+                        listData.add(model)
+                        setupRecycler(listData)
+                    }
+
+                    Log.d("search-data", listData.toString())
+
+
                 }
-
-                Log.d("searching", data.toString())
-                setupRecycler(listData)
-            }
-
-        Log.d("searchhinpt", query)
-//            .addOnSuccessListener { result ->  Log.e("Search Result", "Success $result") }
-//            .addOnFailureListener { message ->  Log.e("Search Result", message.message.toString()) }
+        }
     }
 
 
@@ -179,55 +106,11 @@ class SearchHistoryActivity : AppCompatActivity() {
         binding.rvSearchHistory.setHasFixedSize(true)
         adapter.getItemId(data.indexOf(History()))
         if (adapter.itemCount == 0) {
-            Toast.makeText(this@SearchHistoryActivity, "History is Empty", Toast.LENGTH_SHORT)
+            Toast.makeText(this@SearchHistoryActivity,
+                "History is Empty",
+                Toast.LENGTH_SHORT)
                 .show()
         }
-
     }
 
-//     fun deleteItemRiwayat(){
-//        val reference  = databaseReference.child("UserData").child(firebaseAuth.currentUser?.uid.toString())
-//
-//
-//        reference.child("id_1").setValue(null)
-//    }
-
-
-//    private fun searchHistory(query: String) {
-//        binding.searchHistory.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-//            override fun onQueryTextSubmit(query: String?): Boolean {
-//
-//                if (query != null) {
-//                    searchHistory(query)
-//                }
-//
-//                return true
-//            }
-//
-//            override fun onQueryTextChange(newText: String?): Boolean {
-//                return false
-//            }
-//
-//        })
-//
-//
-//        val idUser = firebaseAuth.uid
-//        databaseReference.child("UserData")
-//            .child("0YS9P0ySOsc8EoGhafjSrITfxEE3")
-//            .child("search_history")
-//            .child(query)
-//            .addListenerForSingleValueEvent(object : ValueEventListener {
-//                override fun onDataChange(snapshot: DataSnapshot) {
-//                    for (data in snapshot.children) {
-//                        Log.d("search", data.value.toString())
-//                    }
-//
-//                }
-//
-//                override fun onCancelled(error: DatabaseError) {
-//
-//                }
-//
-//            })
-//    }
 }

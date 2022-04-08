@@ -66,36 +66,11 @@ class RecordActivity : AppCompatActivity() {
     private lateinit var databaseReference: DatabaseReference
     private lateinit var firebaseAuth: FirebaseAuth
 
-    // private val chartRoomDatabase by lazy { ChartRoomDatabase.getDatabase(this).chartDao() }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRecordBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-
-//            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-//                if (result.resultCode == Activity.RESULT_OK) {
-//                    // Get the new note from the AddNoteActivity
-//                    val dataAdded = 100
-//                    val noteText = result.data?.getStringExtra("note_text")
-//                    // Add the new note at the top of the list
-//                    val newNote = Chart(dataAdded)
-//
-//                    lifecycleScope.launch {
-//                        chartRoomDatabase.insert(newNote)
-//                    }
-//                }
-//
-//            }
-//
-//
-//        binding.textView14.setOnClickListener {
-//            lifecycleScope.launch {
-//                Log.d("===============", chartRoomDatabase.getAllChart().data.toString())
-//            }
-//        }
 
 
         databaseReference = Firebase.database.reference
@@ -158,7 +133,7 @@ class RecordActivity : AppCompatActivity() {
         startDrawing()
 
         Log.d("suara", audioFile.toString())
-        //  Log.d("suara", recorder?.setOutputFile( file.absoluteFile.toString() + "/" + OUTPUT_FILENAME).toString())
+
     }
 
 
@@ -290,30 +265,15 @@ class RecordActivity : AppCompatActivity() {
             override fun onDataChange(snapshot: DataSnapshot) {
 
                 listPoint.add(snapshot.value.toString().toFloat())
-                binding.tvPersentase.text = snapshot.value.toString()
+                (snapshot.value.toString() + "%").also { binding.tvPersentase.text = it }
+
+
+                sendDataPersentaseToFirestore(mapOf("${snapshot.key}" to "${snapshot.value}"))
 
                 if (snapshot.value.toString().toFloat() > 50.0) {
                     count++
                 }
 
-                //             Log.d("+++++++++", snapshot.value.toString())
-//                Log.d("snap", snapshot.value.toString())
-//                val map = snapshot.value as Map<*, *>?
-//                for (data in map?.values!!) {
-//                    if (data.toString().toFloat() > 50.0) {
-//                        listPoint.add(data.toString().toFloat())
-//                        count++
-//                        binding.tvPersentase.text = data.toString()
-//
-//                    }
-//                }
-//
-//                Log.d("uuuuuuuuuuu", map.values.toString())
-
-//                for (data in map.values){
-//                    val point = data.toString().toFloat()
-//                                        sendToFirebaseChart(point)
-//                }
 
                 val record = ArrayList<Entry>()
                 val mutableData = mutableListOf<Float>()
@@ -369,16 +329,14 @@ class RecordActivity : AppCompatActivity() {
     }
 
 
-//    private fun sendToFirebaseChart(data:Float){
-//        databaseReference.child("UserData")
-//            .child(firebaseAuth.uid.toString())
-//            .child("chart")
-//            .child("point")
-//            .setValue(data)
-//
-//
-//    }
+    private fun sendDataPersentaseToFirestore(persentase:Map<String, String>){
+        db.collection("persentase")
+            .add(persentase)
+            .addOnSuccessListener { result ->
+                result.toString()
+            }
 
+    }
 
     private fun stopRecordState() {
         val uid = firebaseAuth.uid
@@ -409,87 +367,14 @@ class RecordActivity : AppCompatActivity() {
             "batuk" to count.toString(),
             "nama" to nameUser,
             "tanggal" to date,
-            "waktu" to time,
-            "removeId" to ""
+            "waktu" to time
         )
 
         db.collection("history")
             .add(history)
             .addOnCompleteListener { result ->
                 Log.d("dataCollection", result.toString())
-                Log.d("documentId", result.toString())
-
             }
-
-
-
-//        val history = hashMapOf(
-//            "data" to mutableListOf(
-//                mapOf(
-//                "batuk" to count.toString(),
-//                "nama" to nameUser,
-//                "tanggal" to date,
-//                "waktu" to time,
-//                "removeId" to ""
-//                )
-//            )
-//        )
-
-//        val history = mapOf(
-//            "data" to listOf(
-//                History(
-//                    count.toString(),
-//                    nameUser,
-//                    date,
-//                    time,
-//                    "tes"
-//                )
-//            )
-//        )
-//
-//
-//        val docData: MutableMap<String, Any> = HashMap()
-//
-//        docData["listExample"] = arrayOf(mapOf(
-//            "batuk" to count.toString(),
-//            "nama" to nameUser,
-//            "tanggal" to date,
-//            "waktu" to time,
-//            "removeId" to "tes"
-//        ))
-//
-//
-//        db.collection("history").document().collection("list")
-//            .add(history)
-//            .addOnCompleteListener { result ->
-//                Log.d("dataCollection", result.toString())
-//                Log.d("documentId", result.toString())
-//
-//            }
-//
-//        class Product(
-//            val satu: String,
-//            val dua: String,
-//            val tiga: Int,
-//        )
-//
-//        class Obj(
-//            val satu: String,
-//            val dua: String,
-//            val data: List<Product>,
-//        )
-//
-//        val list = ArrayList<Product>()
-//        list.add(Product("u1", "1", 1))
-//        list.add(Product("u2", "2", 1))
-//        list.add(Product("u3", "3", 1))
-//
-//        val testObject = Obj("Talha", "Kosen", list)
-//        FirebaseFirestore.getInstance().collection("Test").document("a")
-//            .set(testObject, SetOptions.merge())
-//            .addOnCompleteListener {
-//
-//            }
 
 
     }
