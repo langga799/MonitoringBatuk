@@ -1,7 +1,6 @@
 package com.example.monitoringbatuk.ui.history
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -13,13 +12,16 @@ import com.example.monitoringbatuk.databinding.ItemViewHistoryBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.text.DecimalFormat
 
-var adapterPosition:Int? = null
+var adapterPosition: Int? = null
+
 class HistorySearchAdapter(private val listData: ArrayList<History>) :
     RecyclerView.Adapter<HistorySearchAdapter.HistoryViewHolder>() {
 
     var id = ""
     private val db = Firebase.firestore
+    private val stringBuilder = StringBuilder()
 
     inner class HistoryViewHolder(private val binding: ItemViewHistoryBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -29,7 +31,7 @@ class HistorySearchAdapter(private val listData: ArrayList<History>) :
             binding.tvDate.text = history.tanggal
             binding.tvTime.text = history.waktu
             binding.tvCount.text = history.batuk
-
+            binding.tvResultPersentase.text = history.persentase.toString()
         }
     }
 

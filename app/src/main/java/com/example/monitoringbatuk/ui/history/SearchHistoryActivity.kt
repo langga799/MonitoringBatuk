@@ -2,6 +2,7 @@ package com.example.monitoringbatuk.ui.history
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -50,6 +51,8 @@ class SearchHistoryActivity : AppCompatActivity() {
 
                 Log.d("index-list", listId.toString())
                 setupRecycler(listData)
+
+                binding.loadingHistory.visibility = View.GONE
             }
 
 
@@ -59,6 +62,7 @@ class SearchHistoryActivity : AppCompatActivity() {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 listData.clear()
                 searchHistory(query.orEmpty())
+                binding.loadingHistory.visibility = View.VISIBLE
                 return true
             }
 
@@ -80,12 +84,12 @@ class SearchHistoryActivity : AppCompatActivity() {
                 .addOnCompleteListener { task ->
 
                     for (doc in task.result) {
-                        Log.d("search-hasil", doc.toString())
                         val model = History(
                             doc.getString("batuk"),
                             doc.getString("nama"),
                             doc.getString("tanggal"),
-                            doc.getString("waktu")
+                            doc.getString("waktu"),
+                            doc.getString("persentase"),
                         )
                         listData.add(model)
                         setupRecycler(listData)
@@ -93,7 +97,7 @@ class SearchHistoryActivity : AppCompatActivity() {
 
                     Log.d("search-data", listData.toString())
 
-
+                    binding.loadingHistory.visibility = View.GONE
                 }
         }
     }

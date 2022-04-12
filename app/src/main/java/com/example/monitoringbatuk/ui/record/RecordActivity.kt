@@ -7,7 +7,9 @@ import android.graphics.Color
 import android.media.MediaRecorder
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -41,13 +43,16 @@ class RecordActivity : AppCompatActivity() {
 
     companion object {
         const val REQUEST_CODE = 200
-        const val OUTPUT_DIRECTORY = "VoiceRecorder"
-        const val OUTPUT_FILENAME = "recorder.mp3"
     }
 
     private lateinit var binding: ActivityRecordBinding
     private var nameUser = ""
     private var count = 0
+    private var persentase: String = "0.0"
+
+    var handler: Handler = Handler()
+    var runnable: Runnable? = null
+    var delay = 10000
 
     private val db = Firebase.firestore
 
@@ -212,15 +217,19 @@ class RecordActivity : AppCompatActivity() {
     override fun onBackPressed() {
         timer?.cancel()
         stopRecordState()
+        handler.removeCallbacks(runnable!!)
         super.onBackPressed()
     }
 
     override fun onDestroy() {
         timer?.cancel()
+        handler.removeCallbacks(runnable!!)
         super.onDestroy()
     }
 
 
+    // ====================================================================================
+    // Fungsi-fungsi Firebase
     // ====================================================================================
 
     private fun getStateFromFirebase() {
@@ -266,6 +275,9 @@ class RecordActivity : AppCompatActivity() {
 
                 listPoint.add(snapshot.value.toString().toFloat())
                 (snapshot.value.toString() + "%").also { binding.tvPersentase.text = it }
+
+                persentase = snapshot.value.toString()
+                Log.d("persentase" , persentase)
 
 
                 sendDataPersentaseToFirestore(mapOf("${snapshot.key}" to "${snapshot.value}"))
@@ -367,7 +379,8 @@ class RecordActivity : AppCompatActivity() {
             "batuk" to count.toString(),
             "nama" to nameUser,
             "tanggal" to date,
-            "waktu" to time
+            "waktu" to time,
+            "persentase" to persentase
         )
 
         db.collection("history")
@@ -377,6 +390,22 @@ class RecordActivity : AppCompatActivity() {
             }
 
 
+    }
+
+    override fun onResume() {
+        handler.postDelayed(Runnable {
+            handler.postDelayed(runnable!!, delay.toLong())
+
+            // Kirim ke firestore setiap 10 detik
+            sendToFirestore()
+
+        }.also { runnable = it }, delay.toLong())
+        super.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        handler.removeCallbacks(runnable!!)
     }
 
 

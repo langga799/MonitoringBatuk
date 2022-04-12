@@ -10,17 +10,13 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
-import com.example.monitoringbatuk.MainActivity
-import com.example.monitoringbatuk.SampleActivity
 import com.example.monitoringbatuk.databinding.ActivityDashboardBinding
 import com.example.monitoringbatuk.helper.PreferenceDataStore
 import com.example.monitoringbatuk.helper.PreferenceViewModel
 import com.example.monitoringbatuk.helper.ViewModelFactory
-import com.example.monitoringbatuk.model.Sample
 import com.example.monitoringbatuk.ui.history.SearchHistoryActivity
 import com.example.monitoringbatuk.ui.login.LoginActivity
 import com.example.monitoringbatuk.ui.record.RecordActivity
-import com.example.monitoringbatuk.ui.record.RecordDataActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="110dp"
+    android:layout_height="130dp"
     android:layout_marginHorizontal="8dp"
     android:layout_marginVertical="4dp"
     app:cardBackgroundColor="@color/purple_200"
@@ -65,7 +66,7 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView"
             android:layout_width="10dp"
-            android:layout_height="84dp"
+            android:layout_height="94dp"
             android:layout_marginStart="100dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
@@ -118,6 +119,16 @@
             app:layout_constraintTop_toTopOf="@+id/tv_time" />
 
         <TextView
+            android:id="@+id/tvSlice6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=":"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_result_persentase"
+            app:layout_constraintEnd_toStartOf="@+id/cardView"
+            app:layout_constraintTop_toBottomOf="@+id/tv_count" />
+
+        <TextView
             android:id="@+id/tv_fullName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -167,6 +178,42 @@
             app:layout_constraintStart_toEndOf="@+id/cardView"
             app:layout_constraintTop_toBottomOf="@+id/tv_time"
             app:layout_constraintVertical_bias="0.0" />
+
+
+        <TextView
+            android:id="@+id/tv_result_persentase"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="data"
+            android:maxLength="5"
+            android:textColor="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/cardView"
+            app:layout_constraintTop_toBottomOf="@+id/tv_count" />
+
+        <TextView
+            android:id="@+id/persen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="%"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_result_persentase"
+            app:layout_constraintStart_toEndOf="@+id/tv_result_persentase"
+            app:layout_constraintTop_toTopOf="@+id/tv_result_persentase" />
+
+        <TextView
+            android:id="@+id/tv_12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Persentase"
+            android:textColor="@color/white"
+            app:layout_constraintEnd_toStartOf="@+id/tvSlice6"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView10" />
 
         <ImageView
             android:id="@+id/btn_delete"

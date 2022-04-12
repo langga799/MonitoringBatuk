@@ -1,15 +1,14 @@
-package com.example.monitoringbatuk.ui.record
+package com.example.monitoringbatuk
 
 import android.graphics.Color
-import android.media.MediaRecorder
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.example.monitoringbatuk.R
 import com.example.monitoringbatuk.databinding.ActivityRecordDataBinding
 import com.example.monitoringbatuk.model.RawResultResponse
 import com.example.monitoringbatuk.network.RetrofitBuilder
+import com.example.monitoringbatuk.ui.record.XAxisFormatter
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
