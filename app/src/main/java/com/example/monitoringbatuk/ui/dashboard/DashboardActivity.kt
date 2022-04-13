@@ -42,12 +42,6 @@ class DashboardActivity : AppCompatActivity() {
         binding = ActivityDashboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val db = Firebase.firestore
-        db.collection("history").document("history")
-            .delete()
-            .addOnSuccessListener { Log.d("DashbOard", "DocumentSnapshot successfully deleted!") }
-            .addOnFailureListener { e -> Log.w("DashbOard", "Error deleting document", e) }
-
 
         val pref = PreferenceDataStore.getInstance(this.dataStorePref)
         preferenceViewModel = ViewModelProvider(this,
