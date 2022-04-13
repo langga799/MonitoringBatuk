@@ -388,7 +388,6 @@ class RecordActivity : AppCompatActivity() {
 
         reference.setValue("0")
 
-        sendToFirestore()
     }
 
 
