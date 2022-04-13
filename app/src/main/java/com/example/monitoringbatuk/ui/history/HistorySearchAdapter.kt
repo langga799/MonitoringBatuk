@@ -12,16 +12,15 @@ import com.example.monitoringbatuk.databinding.ItemViewHistoryBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import java.text.DecimalFormat
 
 var adapterPosition: Int? = null
 
+// Class adapter untuk menampilkan data dalam bentuk array list pada recyclerview
 class HistorySearchAdapter(private val listData: ArrayList<History>) :
     RecyclerView.Adapter<HistorySearchAdapter.HistoryViewHolder>() {
 
     var id = ""
     private val db = Firebase.firestore
-    private val stringBuilder = StringBuilder()
 
     inner class HistoryViewHolder(private val binding: ItemViewHistoryBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -59,14 +58,14 @@ class HistorySearchAdapter(private val listData: ArrayList<History>) :
             MaterialAlertDialogBuilder(holder.itemView.context)
                 .setTitle("Hapus riwayat")
                 .setMessage("Apakah anda ingin menghapus item riwayat ini?")
-                .setNegativeButton("No") { dialog, _ ->
+                .setNegativeButton("No") { dialog, _ -> // fungsi untuk mambatalkan aksi dialog
                     dialog.dismiss()
                     Toast.makeText(holder.itemView.context,
                         "Action was canceled",
                         Toast.LENGTH_SHORT).show()
                 }
 
-                .setPositiveButton("Yes") { _, _ ->
+                .setPositiveButton("Yes") { _, _ ->  // fungsi untuk menghapus riwayat
 
                     db.collection("history").document(id)
                         .delete()

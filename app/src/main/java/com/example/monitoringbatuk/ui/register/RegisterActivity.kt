@@ -59,7 +59,7 @@ class RegisterActivity : AppCompatActivity() {
     }
 
 
-    private fun validationRegister() {
+    private fun validationRegister() { // validasi register
         val fullName = binding.edtName.text.toString().trim()
         val email = binding.edtEmail.text.toString().trim()
         val password = binding.edtPassword.text.toString().trim()
@@ -93,6 +93,7 @@ class RegisterActivity : AppCompatActivity() {
     }
 
 
+    // fungsi register dan menyimpan ke firebase
     private fun registerUser(fullName: String, email: String, password: String) {
 
         Log.d("user", "$fullName $email $password ")

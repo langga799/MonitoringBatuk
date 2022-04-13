@@ -71,8 +71,7 @@ class DashboardActivity : AppCompatActivity() {
     }
 
 
-
-    private fun showAlert() {
+    private fun showAlert() { // fungsi untuk menampilkan dialog logout
         MaterialAlertDialogBuilder(this)
             .setTitle("Logout Account")
             .setMessage("Do you want to logout of the account?")
@@ -87,7 +86,7 @@ class DashboardActivity : AppCompatActivity() {
     }
 
 
-    private fun logoutAccount() {
+    private fun logoutAccount() { // fungsi untuk keluar dari akun
         firebaseAuth.signOut()
         preferenceViewModel.saveLogin(false)
 
@@ -96,11 +95,10 @@ class DashboardActivity : AppCompatActivity() {
         startActivity(Intent(this, LoginActivity::class.java))
         finishAffinity()
 
-
     }
 
 
-    private fun getDataUserInfo() {
+    private fun getDataUserInfo() { // untuk mendapatkan data nama user yang akan ditampilkan di textview
         val dataName = firebaseAuth.uid
         databaseReference.child("UserData").child("$dataName").child("fullName")
             .addValueEventListener(object : ValueEventListener {
@@ -118,7 +116,7 @@ class DashboardActivity : AppCompatActivity() {
 
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun navigationController() {
+    private fun navigationController() { // fungsi untuk mengatur navigasi antar activity
         binding.apply {
             btnDataRecord.setOnClickListener {
                 startActivity(Intent(this@DashboardActivity, RecordActivity::class.java))
@@ -128,17 +126,6 @@ class DashboardActivity : AppCompatActivity() {
                 startActivity(Intent(this@DashboardActivity, SearchHistoryActivity::class.java))
             }
 
-//            imageView2.setOnClickListener {
-//                startActivity(Intent(this@DashboardActivity, RecordActivity::class.java))
-//            }
-
-//            textView4.setOnClickListener{
-//                startActivity(Intent(this@DashboardActivity, MainActivity::class.java))
-//            }
-//
-//            textView3.setOnClickListener {
-//                startActivity(Intent(this@DashboardActivity, SampleActivity::class.java))
-//            }
         }
 
     }

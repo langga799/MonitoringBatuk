@@ -38,7 +38,7 @@ class SearchHistoryActivity : AppCompatActivity() {
         listData = arrayListOf()
 
 
-        // get history data
+        // Untuk mendapatkan data histoy
         db.collection("history")
             .orderBy("tanggal", Query.Direction.ASCENDING)
             .get()
@@ -56,8 +56,7 @@ class SearchHistoryActivity : AppCompatActivity() {
             }
 
 
-
-
+        // untuk melakukan pencarian
         binding.searchHistory.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 listData.clear()
@@ -79,6 +78,7 @@ class SearchHistoryActivity : AppCompatActivity() {
 
         if (query.isNotEmpty()) {
 
+            // mendapatkan data hasil searching
             db.collection("history").whereEqualTo("tanggal", query.lowercase(Locale.ROOT))
                 .get()
                 .addOnCompleteListener { task ->
@@ -103,7 +103,7 @@ class SearchHistoryActivity : AppCompatActivity() {
     }
 
 
-    private fun setupRecycler(data: ArrayList<History>) {
+    private fun setupRecycler(data: ArrayList<History>) { // untuk menambahkan arraylist history ke adapter
         val adapter = HistorySearchAdapter(data)
         binding.rvSearchHistory.layoutManager = LinearLayoutManager(this)
         binding.rvSearchHistory.adapter = adapter

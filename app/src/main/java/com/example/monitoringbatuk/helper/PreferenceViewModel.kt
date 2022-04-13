@@ -7,6 +7,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
+// View model untuk menerima perubahan activitas login
 class PreferenceViewModel(private val pref: PreferenceDataStore) : ViewModel() {
 
     fun getLogin(): LiveData<Boolean> {

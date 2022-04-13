@@ -50,7 +50,7 @@ class LoginActivity : AppCompatActivity() {
             ViewModelFactory(pref))[PreferenceViewModel::class.java]
     }
 
-    private fun validateLogin() {
+    private fun validateLogin() { // validasi login
 
         val email = binding.edtEmail.text.toString().trim()
         val password = binding.edtPassword.text.toString().trim()
@@ -75,7 +75,10 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
-    private fun requestsLogin(email: String, password: String) {
+    private fun requestsLogin(
+        email: String,
+        password: String,
+    ) { // fungsi login dan menyimpan data login
         binding.btnLogin.isEnabled = false
         binding.btnLogin.setBackgroundColor(resources.getColor(R.color.disable))
         binding.loadingLogin.visibility = View.VISIBLE
@@ -92,7 +95,7 @@ class LoginActivity : AppCompatActivity() {
                 binding.loadingLogin.visibility = View.INVISIBLE
 
 
-                Handler(mainLooper).postDelayed({
+                Handler(mainLooper).postDelayed({ // fungsi untuk pindah halaman setelah login
                     startActivity(Intent(
                         this,
                         DashboardActivity::class.java

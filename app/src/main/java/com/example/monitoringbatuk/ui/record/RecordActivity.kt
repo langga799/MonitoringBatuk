@@ -9,14 +9,12 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.monitoringbatuk.R
 import com.example.monitoringbatuk.databinding.ActivityRecordBinding
-import com.example.monitoringbatuk.ui.history.History
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
@@ -26,8 +24,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.visualizer.amplitude.dp
@@ -50,11 +46,11 @@ class RecordActivity : AppCompatActivity() {
     private var count = 0
     private var persentase: String = "0.0"
 
+
     var handler: Handler = Handler()
     var runnable: Runnable? = null
     var delay = 10000
 
-    private val db = Firebase.firestore
 
     private val requiredPermissions = arrayOf(
         Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -62,12 +58,16 @@ class RecordActivity : AppCompatActivity() {
         Manifest.permission.RECORD_AUDIO
     )
 
+
     private var timer: Timer? = null
     private var recorder: MediaRecorder? = null
     private var audioFile: File? = null
 
+
     val listPoint = arrayListOf<Float>()
 
+
+    private val db = Firebase.firestore
     private lateinit var databaseReference: DatabaseReference
     private lateinit var firebaseAuth: FirebaseAuth
 
@@ -77,11 +77,10 @@ class RecordActivity : AppCompatActivity() {
         binding = ActivityRecordBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
         databaseReference = Firebase.database.reference
         firebaseAuth = FirebaseAuth.getInstance()
 
-
+        // Visualisasi bentuk audio grafik
         binding.audioRecordView.apply {
             chunkRoundedCorners = true
             chunkAlignTo = com.visualizer.amplitude.AudioRecordView.AlignTo.CENTER
@@ -91,6 +90,7 @@ class RecordActivity : AppCompatActivity() {
             chunkSpace = 1.dp()
         }
 
+        // Untuk membersihkan area grafik
         binding.clearChart.setOnClickListener {
             binding.chart.clear()
         }
@@ -99,7 +99,7 @@ class RecordActivity : AppCompatActivity() {
         getNameUser()
     }
 
-
+    // Fungsi untuk memulai record suara
     private fun startRecording() {
         if (!permissionsIsGranted(requiredPermissions)) {
             ActivityCompat.requestPermissions(this, requiredPermissions, REQUEST_CODE)
@@ -114,7 +114,7 @@ class RecordActivity : AppCompatActivity() {
         }
 
 
-        //Creating MediaRecorder
+        //Membuat MediaRecorder
         recorder = MediaRecorder()
         recorder?.apply {
             setAudioSource(MediaRecorder.AudioSource.MIC)
@@ -142,6 +142,7 @@ class RecordActivity : AppCompatActivity() {
     }
 
 
+    // Fungsi untuk memberhentikan perakaman
     private fun stopRecording() {
         //stopping recorder
         recorder?.apply {
@@ -153,19 +154,23 @@ class RecordActivity : AppCompatActivity() {
     }
 
 
+    // Untuk memulai menggambar grafik aplitudo
     private fun startDrawing() {
         timer = Timer()
         timer?.schedule(object : TimerTask() {
             @SuppressLint("SetTextI18n")
             override fun run() {
                 try {
-                    val currentMaxAmplitude = recorder?.maxAmplitude
+                    val currentMaxAmplitude =
+                        recorder?.maxAmplitude // Untuk mendapatkan nilai frekuensi
                     if (currentMaxAmplitude ?: 0 > 1000) {
-                        binding.audioRecordView.update(currentMaxAmplitude ?: 0) //redraw view
+                        binding.audioRecordView.update(currentMaxAmplitude
+                            ?: 0) //menggambar kembali amplitudo
 
                         binding.tvFrequency.text = currentMaxAmplitude.toString() + " Hz"
 
-                        val db = 20 * kotlin.math.log10(currentMaxAmplitude?.toDouble()!! / 32767.0)
+                        val db =
+                            20 * kotlin.math.log10(currentMaxAmplitude?.toDouble()!! / 32767.0) // Untuk mendapatkan nilai dB
 
                         binding.tvDecibel.text = db.toString()
                     }
@@ -181,7 +186,7 @@ class RecordActivity : AppCompatActivity() {
         }, 1000, 1)
     }
 
-
+    // Memberhentikan gambar amplitude
     private fun stopDrawing() {
         timer?.cancel()
         binding.audioRecordView.recreate()
@@ -213,7 +218,7 @@ class RecordActivity : AppCompatActivity() {
         startRecording()
     }
 
-
+    // dipanggil ketika user menekan tombol kembali
     override fun onBackPressed() {
         timer?.cancel()
         stopRecordState()
@@ -221,10 +226,29 @@ class RecordActivity : AppCompatActivity() {
         super.onBackPressed()
     }
 
+    // dipanggil ketika activity telah dihancurkan
     override fun onDestroy() {
         timer?.cancel()
         handler.removeCallbacks(runnable!!)
         super.onDestroy()
+    }
+
+    // dipanggil ketika activity dalam keadaan resume
+    override fun onResume() {
+        handler.postDelayed(Runnable {
+            handler.postDelayed(runnable!!, delay.toLong())
+
+            // Kirim ke firestore setiap 10 detik
+            sendToFirestore()
+
+        }.also { runnable = it }, delay.toLong())
+        super.onResume()
+    }
+
+    // dipanggil ketika activity dalam keadaan pause
+    override fun onPause() {
+        super.onPause()
+        handler.removeCallbacks(runnable!!) // untuk menghapus thread (utas) pada saat activity pause
     }
 
 
@@ -232,7 +256,7 @@ class RecordActivity : AppCompatActivity() {
     // Fungsi-fungsi Firebase
     // ====================================================================================
 
-    private fun getStateFromFirebase() {
+    private fun getStateFromFirebase() {  // fungsi utuk mendapatkan status recording 0/1
         val uid = firebaseAuth.uid
         val reference =
             databaseReference
@@ -261,7 +285,7 @@ class RecordActivity : AppCompatActivity() {
     }
 
 
-    private fun getPersentaseBatuk() {
+    private fun getPersentaseBatuk() { // fungsi untuk mendapatkan nilai persentase
         val uid = firebaseAuth.uid
         val reference =
             databaseReference
@@ -274,16 +298,18 @@ class RecordActivity : AppCompatActivity() {
             override fun onDataChange(snapshot: DataSnapshot) {
 
                 listPoint.add(snapshot.value.toString().toFloat())
-                (snapshot.value.toString() + "%").also { binding.tvPersentase.text = it }
+                (snapshot.value.toString() + "%").also {
+                    binding.tvPersentase.text = it
+                } // utuk menampilkan ke TextView
 
                 persentase = snapshot.value.toString()
-                Log.d("persentase" , persentase)
+                Log.d("persentase", persentase)
 
 
                 sendDataPersentaseToFirestore(mapOf("${snapshot.key}" to "${snapshot.value}"))
 
                 if (snapshot.value.toString().toFloat() > 50.0) {
-                    count++
+                    count++ // filterisasi dan perhitungan jumlah batuk
                 }
 
 
@@ -310,9 +336,9 @@ class RecordActivity : AppCompatActivity() {
     }
 
 
-    private fun recordMonitoring(record: ArrayList<Entry>) {
+    private fun recordMonitoring(record: ArrayList<Entry>) { // fungsi untuk menampilkan data ke grafik
 
-        // Style
+        // Style Grafik
         val lineDataSetRecord = LineDataSet(record, "Record")
         lineDataSetRecord.setCircleColor(ContextCompat.getColor(this, R.color.teal_700))
         lineDataSetRecord.color = ContextCompat.getColor(this, R.color.teal_700)
@@ -325,7 +351,7 @@ class RecordActivity : AppCompatActivity() {
         lineDataSetRecord.valueTextColor = Color.BLACK
         lineDataSetRecord.circleHoleColor = ContextCompat.getColor(this, R.color.teal_700)
 
-        // Behavior
+        // Perilaku grafik
         val lineChart = binding.chart
         lineChart.setNoDataTextColor(Color.BLACK)
         lineChart.setDrawBorders(true)
@@ -337,19 +363,20 @@ class RecordActivity : AppCompatActivity() {
         lineChart.xAxis.valueFormatter = XAxisFormatter()
         lineChart.axisRight.isEnabled = false
 
-
     }
 
 
-    private fun sendDataPersentaseToFirestore(persentase:Map<String, String>){
+    // Fungsi untuk mengirim semua hasil persentase batuk ke firestore
+    private fun sendDataPersentaseToFirestore(persentase: Map<String, String>) {
         db.collection("persentase")
             .add(persentase)
             .addOnSuccessListener { result ->
                 result.toString()
             }
-
     }
 
+
+    // fungsi untuk stop melakukan record
     private fun stopRecordState() {
         val uid = firebaseAuth.uid
         val reference =
@@ -365,7 +392,7 @@ class RecordActivity : AppCompatActivity() {
     }
 
 
-    private fun sendToFirestore() {
+    private fun sendToFirestore() { // fungsi untuk mengirim hasil riwayat
         val current = LocalDateTime.now()
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val date = current.format(formatter)
@@ -392,23 +419,8 @@ class RecordActivity : AppCompatActivity() {
 
     }
 
-    override fun onResume() {
-        handler.postDelayed(Runnable {
-            handler.postDelayed(runnable!!, delay.toLong())
 
-            // Kirim ke firestore setiap 10 detik
-            sendToFirestore()
-
-        }.also { runnable = it }, delay.toLong())
-        super.onResume()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        handler.removeCallbacks(runnable!!)
-    }
-
-
+    // fungsi untuk mendapatkan nama user
     private fun getNameUser() {
         val uid = firebaseAuth.uid
         val reference = databaseReference.child("UserData").child(uid.toString()).child("fullName")

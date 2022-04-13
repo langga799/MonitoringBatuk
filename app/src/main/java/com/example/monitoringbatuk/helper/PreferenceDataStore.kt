@@ -8,7 +8,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-
+// Class bantuan untuk menyimpan aktivitas login dari user
 class PreferenceDataStore private constructor(private val dataStore: DataStore<Preferences>) {
 
     private val loginState = booleanPreferencesKey("save_login_state")

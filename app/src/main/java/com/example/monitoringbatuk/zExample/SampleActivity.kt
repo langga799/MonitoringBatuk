@@ -1,4 +1,4 @@
-package com.example.monitoringbatuk
+package com.example.monitoringbatuk.zExample
 
 import android.Manifest
 import android.annotation.SuppressLint

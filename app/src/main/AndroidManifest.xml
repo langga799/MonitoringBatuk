@@ -18,10 +18,10 @@
         android:theme="@style/Theme.MonitoringBatuk"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".SampleActivity"
+            android:name=".zExample.SampleActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".zExample.MainActivity"
             android:exported="false" />
         <activity
             android:name=".ui.record.RecordActivity"
@@ -33,7 +33,7 @@
             android:name=".ui.register.RegisterActivity"
             android:exported="false" />
         <activity
-            android:name=".RecordDataActivity"
+            android:name=".zExample.RecordDataActivity"
             android:exported="false" />
         <activity
             android:name=".ui.login.LoginActivity"

@@ -1,10 +1,11 @@
-package com.example.monitoringbatuk
+package com.example.monitoringbatuk.zExample
 
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.example.monitoringbatuk.R
 import com.example.monitoringbatuk.databinding.ActivityRecordDataBinding
 import com.example.monitoringbatuk.model.RawResultResponse
 import com.example.monitoringbatuk.network.RetrofitBuilder
