@@ -64,6 +64,7 @@ class RecordDataActivity : AppCompatActivity() {
                     if (response.isSuccessful) {
                         val dataSample = response.body()?.payload?.values!!
 
+                        Log.d("adadadadad", dataSample.toString())
 //                        sendToFirebase(dataSample)
                         val reference: DatabaseReference = Firebase.database.reference
 

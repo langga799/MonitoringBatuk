@@ -1,5 +1,7 @@
 package com.example.monitoringbatuk.network
 
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -18,9 +20,13 @@ class RetrofitBuilder {
                 .addInterceptor(logging)
                 .build()
 
+            val gson: Gson = GsonBuilder()
+                .setLenient()
+                .create()
+
             val retrofit = Retrofit.Builder()
                 .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .client(client)
                 .build()
 

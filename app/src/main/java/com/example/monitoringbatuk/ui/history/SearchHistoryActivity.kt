@@ -33,6 +33,7 @@ class SearchHistoryActivity : AppCompatActivity() {
         binding = ActivitySearchHistoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
         firebaseAuth = FirebaseAuth.getInstance()
         databaseReference = Firebase.database.reference
         listData = arrayListOf()
@@ -46,6 +47,7 @@ class SearchHistoryActivity : AppCompatActivity() {
                 for (document in result) {
                     val data = listId.add(document.id)
                     Log.d("index-data", data.toString())
+                    Log.d("data", document.toString())
                     listData.add(document.toObject(History::class.java))
                 }
 
@@ -66,7 +68,10 @@ class SearchHistoryActivity : AppCompatActivity() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                return false
+                listData.clear()
+                searchHistory(newText.orEmpty())
+                binding.loadingHistory.visibility = View.VISIBLE
+                return true
             }
 
         })

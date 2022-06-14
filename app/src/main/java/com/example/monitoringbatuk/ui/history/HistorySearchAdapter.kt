@@ -2,6 +2,7 @@ package com.example.monitoringbatuk.ui.history
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -18,6 +19,10 @@ var adapterPosition: Int? = null
 // Class adapter untuk menampilkan data dalam bentuk array list pada recyclerview
 class HistorySearchAdapter(private val listData: ArrayList<History>) :
     RecyclerView.Adapter<HistorySearchAdapter.HistoryViewHolder>() {
+
+    init {
+        Log.d("data-list", listData.toString())
+    }
 
     var id = ""
     private val db = Firebase.firestore

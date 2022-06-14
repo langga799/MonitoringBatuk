@@ -7,6 +7,7 @@
         <entry key="..\:/Users/langg/AndroidStudioProjects/MonitoringBatuk/app/src/main/res/layout/activity_dashboard.xml" value="0.264" />
         <entry key="..\:/Users/langg/AndroidStudioProjects/MonitoringBatuk/app/src/main/res/layout/activity_history.xml" value="0.1" />
         <entry key="..\:/Users/langg/AndroidStudioProjects/MonitoringBatuk/app/src/main/res/layout/activity_history_count.xml" value="0.24615384615384617" />
+        <entry key="..\:/Users/langg/AndroidStudioProjects/MonitoringBatuk/app/src/main/res/layout/activity_list_audio_sample.xml" value="0.264" />
         <entry key="..\:/Users/langg/AndroidStudioProjects/MonitoringBatuk/app/src/main/res/layout/activity_login.xml" value="0.2" />
         <entry key="..\:/Users/langg/AndroidStudioProjects/MonitoringBatuk/app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="..\:/Users/langg/AndroidStudioProjects/MonitoringBatuk/app/src/main/res/layout/activity_monitoring.xml" value="0.2" />
@@ -14,9 +15,12 @@
         <entry key="..\:/Users/langg/AndroidStudioProjects/MonitoringBatuk/app/src/main/res/layout/activity_record_data.xml" value="0.264" />
         <entry key="..\:/Users/langg/AndroidStudioProjects/MonitoringBatuk/app/src/main/res/layout/activity_register.xml" value="0.264" />
         <entry key="..\:/Users/langg/AndroidStudioProjects/MonitoringBatuk/app/src/main/res/layout/activity_sample.xml" value="0.33" />
+        <entry key="..\:/Users/langg/AndroidStudioProjects/MonitoringBatuk/app/src/main/res/layout/activity_scan_barcode.xml" value="0.23229166666666667" />
         <entry key="..\:/Users/langg/AndroidStudioProjects/MonitoringBatuk/app/src/main/res/layout/activity_search_history.xml" value="0.25" />
         <entry key="..\:/Users/langg/AndroidStudioProjects/MonitoringBatuk/app/src/main/res/layout/activity_splash_screen.xml" value="0.33" />
+        <entry key="..\:/Users/langg/AndroidStudioProjects/MonitoringBatuk/app/src/main/res/layout/activity_web_view.xml" value="0.23229166666666667" />
         <entry key="..\:/Users/langg/AndroidStudioProjects/MonitoringBatuk/app/src/main/res/layout/item_history_section.xml" value="0.264" />
+        <entry key="..\:/Users/langg/AndroidStudioProjects/MonitoringBatuk/app/src/main/res/layout/item_list_audio.xml" value="0.264" />
         <entry key="..\:/Users/langg/AndroidStudioProjects/MonitoringBatuk/app/src/main/res/layout/item_view_date.xml" value="0.25" />
         <entry key="..\:/Users/langg/AndroidStudioProjects/MonitoringBatuk/app/src/main/res/layout/item_view_history.xml" value="0.4903536977491961" />
       </map>

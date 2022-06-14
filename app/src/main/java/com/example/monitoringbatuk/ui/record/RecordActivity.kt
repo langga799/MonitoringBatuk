@@ -99,6 +99,7 @@ class RecordActivity : AppCompatActivity() {
         getNameUser()
     }
 
+
     // Fungsi untuk memulai record suara
     private fun startRecording() {
         if (!permissionsIsGranted(requiredPermissions)) {
@@ -107,7 +108,8 @@ class RecordActivity : AppCompatActivity() {
         }
 
         try {
-            audioFile = File.createTempFile("audio", "tmp.mp3", cacheDir)
+            // audioFile = externalCacheDir
+            audioFile = File.createTempFile("cough_", ".wav", externalCacheDir) // work code
         } catch (e: java.io.IOException) {
             Log.e(RecordActivity::class.simpleName, e.message ?: e.toString())
             return
@@ -163,7 +165,7 @@ class RecordActivity : AppCompatActivity() {
                 try {
                     val currentMaxAmplitude =
                         recorder?.maxAmplitude // Untuk mendapatkan nilai frekuensi
-                    if (currentMaxAmplitude ?: 0 > 1000) {
+                    if ((currentMaxAmplitude ?: 0) > 1000) {
                         binding.audioRecordView.update(currentMaxAmplitude
                             ?: 0) //menggambar kembali amplitudo
 
