@@ -51,7 +51,7 @@
         android:id="@+id/btn_data_record"
         android:layout_width="230dp"
         android:layout_height="56dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="32dp"
         android:text="@string/data_record"
         android:textAllCaps="false"
         android:textColor="@color/black"
@@ -66,7 +66,7 @@
         android:id="@+id/btn_to_history"
         android:layout_width="230dp"
         android:layout_height="56dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="@string/history"
         android:textAllCaps="false"
         android:textColor="@color/black"
@@ -76,17 +76,33 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_data_record" />
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_to_voice_record"
+        android:layout_width="230dp"
+        android:layout_height="56dp"
+        android:layout_marginTop="8dp"
+        android:text="Start Record"
+        android:textAllCaps="false"
+        android:textColor="@color/black"
+        app:backgroundTint="@color/white"
+        app:cornerRadius="32dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_to_history" />
+
     <TextView
         android:id="@+id/tv_person_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:layout_marginBottom="8dp"
         android:text="Person Name"
         android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/btn_logout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_to_history"
+        app:layout_constraintTop_toBottomOf="@+id/btn_to_voice_record"
         app:layout_constraintVertical_bias="1.0" />
 
     <com.google.android.material.button.MaterialButton

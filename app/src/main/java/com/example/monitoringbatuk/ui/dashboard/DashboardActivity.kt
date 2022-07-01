@@ -16,6 +16,7 @@ import com.example.monitoringbatuk.helper.ViewModelFactory
 import com.example.monitoringbatuk.ui.history.SearchHistoryActivity
 import com.example.monitoringbatuk.ui.login.LoginActivity
 import com.example.monitoringbatuk.ui.record.RecordActivity
+import com.example.monitoringbatuk.ui.recordVoice.RecordVoiceActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -116,6 +117,10 @@ class DashboardActivity : AppCompatActivity() {
 
             btnToHistory.setOnClickListener {
                 startActivity(Intent(this@DashboardActivity, SearchHistoryActivity::class.java))
+            }
+
+            btnToVoiceRecord.setOnClickListener {
+                startActivity(Intent(this@DashboardActivity,RecordVoiceActivity::class.java))
             }
         }
 
