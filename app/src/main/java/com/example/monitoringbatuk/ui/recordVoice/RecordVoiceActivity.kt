@@ -23,8 +23,10 @@ import com.example.monitoringbatuk.databinding.ActivityRecordVoiceBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.File
-import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -82,7 +84,7 @@ class RecordVoiceActivity : AppCompatActivity() {
             fileName = textInputFile.text.toString()
         }
 
-        saveWithName()
+        //  saveWithName()
 
     }
 
@@ -113,19 +115,17 @@ class RecordVoiceActivity : AppCompatActivity() {
 //        }
 
 
-
         dirPath = "${externalCacheDir?.absolutePath}/"
 //        val simpleDateFormat = SimpleDateFormat("yyyy.MM.DD_hh.mm.ss")
 //        val date = simpleDateFormat.format(Date())
 //        fileName = "audio_record_$date"
 
 
-
         recorder?.apply {
             setAudioSource(MediaRecorder.AudioSource.MIC)
             setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
             setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-            setOutputFile(dirPath+fileName)
+            setOutputFile(dirPath + fileName)
             setAudioSamplingRate(48000)
             setAudioEncodingBitRate(48000)
 
@@ -170,13 +170,66 @@ class RecordVoiceActivity : AppCompatActivity() {
             release()
 
         }
-     //   saveWithName()
+
+        saveFile()
+
+
+        //   saveWithName()
 
         //  showBottomSheet()
 
 
-
         stopDrawing()
+    }
+
+    private var currentDir = ""
+    private fun saveFile() {
+        val builder = android.app.AlertDialog.Builder(this)
+//        builder.setTitle("Simpan Audio")
+//
+//        val input = EditText(this)
+//        input.hint = "Ketikkan nama file"
+//        input.inputType = InputType.TYPE_CLASS_TEXT
+//
+//
+//        builder.setView(input)
+
+        val view = LayoutInflater.from(this).inflate(R.layout.sheet_bottom, null, false)
+        val btn = view.findViewById<MaterialButton>(R.id.btn_oke)
+        builder.setView(view)
+
+        val edt = view.findViewById<TextInputEditText>(R.id.inputNew)
+        btn.setOnClickListener {
+            currentDir = dirPath + fileName
+            Log.d("Dir saat ini", currentDir)
+            edt.setText(currentDir)
+        }
+
+        builder.setPositiveButton("Ok") { _, _ ->
+
+
+            val newFile = edt.text.toString()
+
+            val src = File(dirPath + fileName)
+            val dest = File(newFile)
+
+            Log.d("src", src.toString())
+            Log.d("dest", dest.toString())
+
+            src.renameTo(dest)
+            CoroutineScope(Dispatchers.Main).launch {
+                src.renameTo(dest)
+            }
+
+
+        }
+
+        builder.setNegativeButton("Batal") { dialog, g ->
+
+        }
+        builder.setCancelable(false)
+        builder.show()
+
     }
 
 
@@ -276,8 +329,8 @@ class RecordVoiceActivity : AppCompatActivity() {
 
             Log.d("filnameeee", fileName)
 
-         //   fileName += ".wav"
-           // setOutputFile(  dirPath+fileName)
+            //   fileName += ".wav"
+            // setOutputFile(  dirPath+fileName)
 //            recorder?.apply {
 //
 //                stop()
@@ -285,7 +338,7 @@ class RecordVoiceActivity : AppCompatActivity() {
 //                Log.d("simpanddddd", "smpan=$dirPath$fileName")
 //
 //            }
-           // recorder?.setOutputFile(newFile)
+            // recorder?.setOutputFile(newFile)
 
 
         }
