@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "167034659838",
+    "project_id": "monitoring-batuk",
+    "storage_bucket": "monitoring-batuk.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:167034659838:android:985588226c8e18490556af",
+        "android_client_info": {
+          "package_name": "com.example.monitoringbatuk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "167034659838-bta7j1t66dp6homgnmt9nugoup64udi1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCwXL6zm4t_5T4zv8ysrumdw71NwAFMgMY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "167034659838-bta7j1t66dp6homgnmt9nugoup64udi1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

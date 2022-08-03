@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Monitoring Batuk</string>
+    <string name="dashboard_description">ECough is a cough detection monitoring application that is esay to use in providing correct result.</string>
+    <string name="title_dashboard">WELCOME TO ECOUGH</string>
+    <string name="data_record">Data Record</string>
+    <string name="history">History</string>
+</resources>
